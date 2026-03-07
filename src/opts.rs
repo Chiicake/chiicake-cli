@@ -13,11 +13,14 @@ pub struct Opts {
 pub enum SubCommand {
     #[command(name = "csv", about = "Convert CSV to other formats")]
     Csv(CsvOpts),
+    #[command(name = "ls", about = "List files in a directory")]
+    Ls,
 }
 
 pub fn execute_opt(opts: Opts) -> Result<(), Box<dyn Error>> {
     match opts.cmd {
         SubCommand::Csv(csv_opts) => execute_csv(&csv_opts)?,
+        SubCommand::Ls => (),
     }
     Ok(())
 }
