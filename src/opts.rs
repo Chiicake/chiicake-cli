@@ -3,7 +3,7 @@ use clap::Parser;
 use std::error::Error;
 
 #[derive(Debug, Parser)]
-#[command(name = "chiicake-cli", version, about, long_about = None)]
+#[command(name = "ccli", version, about, long_about = None)]
 pub struct Opts {
     #[command(subcommand)]
     cmd: SubCommand,

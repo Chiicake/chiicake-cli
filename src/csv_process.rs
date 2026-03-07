@@ -1,19 +1,8 @@
 use clap::Parser;
-use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::error::Error;
-#[derive(Debug, Deserialize, Serialize)]
-struct Player {
-    #[serde(rename = "Name")]
-    name: String,
-    #[serde(rename = "Position")]
-    position: String,
-    #[serde(rename = "DOB")]
-    dob: String,
-    #[serde(rename = "Nationality")]
-    nationality: String,
-    #[serde(rename = "Kit Number")]
-    kit_number: u8,
-}
+use std::fs;
+
 #[derive(Debug, Parser)]
 pub struct CsvOpts {
     // value parser 用于作为输入检查
@@ -46,14 +35,21 @@ fn verify_input_file(filename: &str) -> Result<String, String> {
 
 pub fn execute_csv(csv_opts: &CsvOpts) -> Result<(), Box<dyn Error>> {
     let mut reader = csv::ReaderBuilder::new().from_path(&csv_opts.input)?;
-    let record = reader
-        .deserialize()
-        .map(|result| result.expect("Failed to deserialize CSV"))
-        .collect::<Vec<Player>>();
+    let headers = reader.headers()?.clone();
 
-    println!("{:?}", record);
-    let json = serde_json::to_string_pretty(&record)?;
-    std::fs::write(&csv_opts.output, json)?;
-    println!("Wrote to {}", csv_opts.output);
+    let mut ret = Vec::with_capacity(128);
+    for record in reader.records() {
+        let record = record?;
+        let produced_record: HashMap<String, String> = headers
+            .iter()
+            .zip(record.iter())
+            .map(|(h, v)| (h.to_string(), v.to_string()))
+            .collect();
+        ret.push(produced_record);
+    }
+
+    let ret = serde_json::to_string_pretty(&ret)?;
+    println!("{}", ret);
+    fs::write(&csv_opts.output, &ret)?;
     Ok(())
 }
