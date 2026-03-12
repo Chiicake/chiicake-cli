@@ -1,4 +1,4 @@
-use ccli::cli::opts;
+use ccli::common::opts;
 use clap::Parser;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
