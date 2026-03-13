@@ -1,5 +1,5 @@
+use crate::process::verify_input_file;
 use clap::Parser;
-
 #[derive(Debug, Parser)]
 pub enum Base64Subcommand {
     #[command(name = "encode", about = "Encode a string to Base64")]
@@ -10,13 +10,14 @@ pub enum Base64Subcommand {
 
 #[derive(Debug, Parser)]
 pub struct Base64EncodingOpts {
-    #[arg(short, long, help = "Input string to encode", default_value = "")]
+    // default_value = "-" 表示从标准输入读取数据
+    #[arg(short, long, help = "Input string to encode", value_parser = verify_input_file, default_value = "-")]
     pub input: String,
 }
 
 #[derive(Debug, Parser)]
 pub struct Base64DecodingOpts {
-    #[arg(short, long, help = "Base64 string to decode", default_value = "")]
+    #[arg(short, long, help = "Base64 string to decode", value_parser = verify_input_file, default_value = "-")]
     pub input: String,
 }
 

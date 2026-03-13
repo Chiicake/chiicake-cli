@@ -1,3 +1,4 @@
+use crate::process::verify_input_file;
 use clap::Parser;
 use std::collections::HashMap;
 use std::error::Error;
@@ -59,15 +60,6 @@ impl TryFrom<&str> for OutputFormat {
             _ => Err(format!("Unsupported output format '{}'", value)),
         }
     }
-}
-
-fn verify_input_file(filename: &str) -> Result<String, String> {
-    if !std::path::Path::new(filename).exists() {
-        return Err(format!("Input file '{}' does not exist", filename));
-    } else if !filename.ends_with(".csv") {
-        return Err(format!("Input file '{}' is not a CSV file", filename));
-    }
-    Ok(filename.to_string())
 }
 
 fn verify_output_filename(filename: &str) -> Result<String, String> {
